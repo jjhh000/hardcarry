@@ -2,7 +2,7 @@ const { response } = require('express');
 const { Pool } = require('pg');
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL|| 'postgres://xfgmmxplomltza:16e6916be0d5dca9d31755ebf78795bb33ac117329912f6c9e6946f66e95a2f7@ec2-3-230-122-20.compute-1.amazonaws.com:5432/dcnefjom3hnb5s',
+    connectionString: process.env.DATABASE_URL|| 'postgres://cxkudsddybgmsd:cdcd2dbbf4522e8337c45590ab3f76901c322c5cc3c06bafcfd071a50e1dac93@ec2-44-194-4-127.compute-1.amazonaws.com:5432/de68rh041rn1ps',
     ssl: { rejectUnauthorized: false }
 })
 
