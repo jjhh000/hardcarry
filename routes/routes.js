@@ -9,7 +9,7 @@ router.use(bodyParser.json());
 
 
 module.exports = app =>{
-    router.post("/listCmnt",api.listCmnt);
+    router.get("/listCmnt",api.listCmnt);
     router.post("/addCmnt",api.addCmnt);
     router.post("/updateCmnt",api.updateCmnt);
     router.post("/deleteCmnt",api.deleteCmnt);
