@@ -5,6 +5,8 @@ const cors = require("cors");
 //const PORT = process.env.PORT || 5007 ;
 var app = express(); 
 
+require('dotenv').config();
+
 app
   .use(cors()) 
   .use(express.static(path.join(__dirname, 'public')))

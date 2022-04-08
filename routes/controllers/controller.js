@@ -2,8 +2,10 @@ const { response } = require('express');
 const { Pool } = require('pg');
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL|| 'postgres://cxkudsddybgmsd:cdcd2dbbf4522e8337c45590ab3f76901c322c5cc3c06bafcfd071a50e1dac93@ec2-44-194-4-127.compute-1.amazonaws.com:5432/de68rh041rn1ps',
-    ssl: { rejectUnauthorized: false }
+    connectionString: process.env.DATABASE_URL,
+    ssl: { 
+            rejectUnauthorized: false
+        }
 })
 
 const listCmnt = (request,response)=>{
