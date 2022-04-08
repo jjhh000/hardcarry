@@ -32,10 +32,10 @@ const addCmnt = (request,response)=>{
     
     pool.query('INSERT INTO comment(cmnttext, cmntdate) VALUES($1, $2)',[cmnttext, cmntdate]);
     console.log(response);
-    response.json({
+    response.status(200).json({
         message: 'Added Successfully',
         body:{
-            user:{cmnttext,cmntdate}
+            comment:{cmnttext,cmntdate}
         }
     });
 };

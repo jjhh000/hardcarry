@@ -1,11 +1,12 @@
 const express = require('express');
 const path = require('path');
 const router = require("express").Router();
+const cors = require("cors");
 //const PORT = process.env.PORT || 5007 ;
-var app = express();
- 
+var app = express(); 
 
 app
+  .use(cors()) 
   .use(express.static(path.join(__dirname, 'public')))
   .set('views', path.join(__dirname, 'views')) 
   .get('/', (req, res) => {res.send("hi!!!");})
