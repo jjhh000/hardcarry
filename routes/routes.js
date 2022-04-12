@@ -13,8 +13,10 @@ module.exports = app =>{
     router.post("/addCmnt",api.addCmnt);
     router.post("/updateCmnt",api.updateCmnt);
     router.post("/deleteCmnt",api.deleteCmnt);
-    router.post("/compareCmntPw",api.compareCmntPw);
-     
+    router.post("/compareCmntPw",api.compareCmntPw);router.get("/listCmnt",api.listCmnt);
+    router.get("/listCard",api.listCard);
+    router.post("/updateCard",api.updateCard);
+    
     
  
 

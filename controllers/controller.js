@@ -24,7 +24,7 @@ const listCmnt = (request,response)=>{
         
         console.log("list here (paging) " + pagenumb + " / " + pagesize + " / " + pagestart + " / " + pageend);  
 
-        pool.query('SELECT a.* FROM (SELECT row_number() over(), * FROM comment  ORDER BY cmntid asc) a '
+        pool.query('SELECT a.* FROM (SELECT row_number() over(), * FROM comment  ORDER BY cmntid desc) a '
                     + 'WHERE row_number BETWEEN $1 AND $2',[pagestart,pageend] , (err, result) => { 
             if (err) {
                 return console.error('Error executing query', err.stack); 
@@ -40,7 +40,7 @@ const listCmnt = (request,response)=>{
 
     }else{
         console.log("list here (no paging)");
-        pool.query('SELECT row_number() over(), a.* FROM (SELECT * FROM comment ORDER BY cmntid asc) a', (err, result) => {      
+        pool.query('SELECT row_number() over(), a.* FROM (SELECT * FROM comment ORDER BY cmntid desc) a', (err, result) => {      
             if (err) {
                 return console.error('Error executing query', err.stack);
                 
@@ -103,7 +103,6 @@ const deleteCmnt = (request,response)=>{
     //response.json(` ${cmntid} deleted successfully`);
     */
 };
- 
 
 const compareCmntPw = (request,response)=>{
     var operation = request.body["operation"];
@@ -113,7 +112,7 @@ const compareCmntPw = (request,response)=>{
     var cmntpw = request.body["cmntpw"]; 
  
     pool.query('SELECT * FROM comment WHERE cmntid = $1 and cmntpw = $2',[cmntid, cmntpw],(err, result) => {   
-        console.log("result : " + result);
+        console.log("compareCmntPw select result : " + result);
 
         if (err) {
             return console.error('Error executing query', err);  
@@ -152,13 +151,53 @@ const compareCmntPw = (request,response)=>{
     }); 
 
 };
+
+
+const listCard = (request,response)=>{  
+  
+        pool.query('SELECT * FROM cardcount ORDER BY cardid asc', (err, result) => {      
+            if (err) {
+                return console.error('Error executing query', err.stack);
+                
+                console.log(err);
+                //result.status(400).send(err);
+            }
+            console.log(result);
+            response.send(result.rows); 
+            // res.status(200).json(response.rows);
+        });
+    
+}
  
+
+const updateCard = (request,response)=>{ 
+    var cardid = request.body["cardid"];    
+    
+    pool.query('SELECT * FROM cardcount WHERE cardid = $1 ORDER BY cardid asc',[cardid], (err, result) => {      
+        if (err) {
+            return console.error('Error executing query', err.stack);
+            
+            console.log(err);
+            //result.status(400).send(err);
+        } 
+
+        pool.query('UPDATE cardcount SET cardcnt = $1 WHERE cardid = $2',[result.rows[0].cardcnt+1, cardid]);
+                    console.log("cardcnt : " + (result.rows[0].cardcnt + 1));  
+                    response.json(`cmntid ${cardid} updated successfully`);
  
+    });
+      
+}
+
+
+
 module.exports = {
     listCmnt,
     addCmnt,
     updateCmnt,
     deleteCmnt,
     compareCmntPw, 
+    listCard,
+    updateCard,
 
 }
