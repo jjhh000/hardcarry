@@ -53,10 +53,14 @@ const updateCmnt = (request,response)=>{
     
     //const id = req.params.id;
     //const {name, email} = req.body;
+
+    response.json('do not use this api...(updateCmnt -> compareCmntPw)');
     
+    /*
     pool.query('UPDATE comment SET cmnttext = $1, cmntfixdate = $2, cmntpw = $3 WHERE cmntid = $4',[cmnttext, cmntfixdate, cmntpw, cmntid]);
     console.log(response);
     response.json('updated successfully');
+    */
 };   
 
 const deleteCmnt = (request,response)=>{
@@ -65,31 +69,34 @@ const deleteCmnt = (request,response)=>{
     var cmntfixdate = moment().format("YYYYMMDD");
     var cmntpw = request.body["cmntpw"];
 
+    response.json('do not use this api...(deleteCmnt -> compareCmntPw)');
+
+    /*
     pool.query('DELETE FROM comment WHERE cmntid = $1',[cmntid]);
     console.log(response);
-    response.json(` ${cmntid} deleted successfully`);
+    //response.json(` ${cmntid} deleted successfully`);
+    */
 };
  
 
-const comparePw = (request,response)=>{
+const compareCmntPw = (request,response)=>{
     var operation = request.body["operation"];
     var cmntid = request.body["cmntid"]; 
     var cmnttext = request.body["cmnttext"]; 
     var cmntfixdate = moment().format("YYYYMMDD");
     var cmntpw = request.body["cmntpw"]; 
  
-    pool.query('SELECT * FROM comment WHERE cmntid = $1 and cmntpw = $2',[cmntid, cmntpw],(err, result) => {     
-        
+    pool.query('SELECT * FROM comment WHERE cmntid = $1 and cmntpw = $2',[cmntid, cmntpw],(err, result) => {   
         console.log("result : " + result);
 
         if (err) {
-            return console.error('Error executing query', err);
-            console.log(err);
-            
+            return console.error('Error executing query', err);  
             console.log(err);
             //result.status(400).send(err);
+
         }else if(!result.rows[0]) {
-            response.json('not matched data');
+            response.json("not matched data... check 'cmntid and cmntpw'"); 
+            console.log('not matched data' + result.rows); 
 
         }else if(result.rows[0]) { 
             if(result.rows[0].cmntpw == cmntpw){
@@ -126,6 +133,6 @@ module.exports = {
     addCmnt,
     updateCmnt,
     deleteCmnt,
-    comparePw, 
+    compareCmntPw, 
 
 }
