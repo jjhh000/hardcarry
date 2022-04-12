@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const api = require("./controllers/controller");
+const api = require("../controllers/controller");
 
 
 var bodyParser = require('body-parser'); 
@@ -13,6 +13,9 @@ module.exports = app =>{
     router.post("/addCmnt",api.addCmnt);
     router.post("/updateCmnt",api.updateCmnt);
     router.post("/deleteCmnt",api.deleteCmnt);
+    router.post("/comparePw",api.comparePw);
+     
+    
  
 
     app.use('/hardcarry',router);
