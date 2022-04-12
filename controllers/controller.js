@@ -11,21 +11,47 @@ const pool = new Pool({
 })
 
 const listCmnt = (request,response)=>{
+    var pagenumb = request.body["pagenumb"];  
+    var pagesize = 10;  
     
-   // response.send('제발제발'); 
-     
-    pool.query('SELECT * FROM comment order by cmntid asc', (err, result) => {      
-        if (err) {
-            return console.error('Error executing query', err.stack);
-            console.log(err);
-            
-            console.log(err);
-            //result.status(400).send(err);
-        }
-        console.log(result);
-        response.send(result.rows); 
-        // res.status(200).json(response.rows);
-    });
+    if(request.body["pagesize"]){
+        pagesize = request.body["pagesize"];
+    }
+
+    if(pagenumb){ 
+        var pagestart = (pagenumb -1) * pagesize;  
+        var pageend = pagenumb * pagesize;
+        
+        console.log("list here (paging) " + pagenumb + " / " + pagesize + " / " + pagestart + " / " + pageend);  
+
+        pool.query('SELECT a.* FROM (SELECT row_number() over(), * FROM comment  ORDER BY cmntid asc) a '
+                    + 'WHERE row_number BETWEEN $1 AND $2',[pagestart,pageend] , (err, result) => { 
+            if (err) {
+                return console.error('Error executing query', err.stack); 
+
+                console.log(err);
+                //result.status(400).send(err);
+            }
+
+            console.log(result);
+            response.send(result.rows); 
+            // res.status(200).json(response.rows);
+        });
+
+    }else{
+        console.log("list here (no paging)");
+        pool.query('SELECT row_number() over(), a.* FROM (SELECT * FROM comment ORDER BY cmntid asc) a', (err, result) => {      
+            if (err) {
+                return console.error('Error executing query', err.stack);
+                
+                console.log(err);
+                //result.status(400).send(err);
+            }
+            console.log(result);
+            response.send(result.rows); 
+            // res.status(200).json(response.rows);
+        });
+    } 
 }
 
 const addCmnt = (request,response)=>{
