@@ -1,7 +1,7 @@
 const { response } = require('express');
 const { Pool } = require('pg');
 const { upperCase } = require('upper-case');
-const moment = require("moment");
+const moment = require("moment");  
   
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -189,6 +189,17 @@ const updateCard = (request,response)=>{
       
 }
 
+const maeilZero = (request,response)=>{
+
+    response.download('./docs/test_sheet.pdf', (err)=>{
+        if (err) {
+            console.log("maeilZero Error");
+            console.log(err);
+        } else {
+            console.log("maeilZero Success");
+        }
+    });
+}
 
 
 module.exports = {
@@ -196,8 +207,11 @@ module.exports = {
     addCmnt,
     updateCmnt,
     deleteCmnt,
-    compareCmntPw, 
+    compareCmntPw,
+
     listCard,
     updateCard,
+    
+    maeilZero,
 
 }
