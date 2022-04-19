@@ -2,7 +2,7 @@ const { response } = require('express');
 const { Pool } = require('pg');
 const { upperCase } = require('upper-case');
 const moment = require("moment");  
-  
+
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: { 
@@ -11,11 +11,13 @@ const pool = new Pool({
 })
 
 const listCmnt = (request,response)=>{
-    var pagenumb = request.params.pagenumb;  
+    var pagenumb = request.param('pagenumb');  
     var pagesize = 10;  
     
-    if(request.params.pagenumb){
-        pagesize = request.params.pagesize;
+    console.log("pagenumb : " +pagenumb);
+
+    if(request.param('pagesize')){
+        pagesize = request.param('pagesize');
     }
 
     if(pagenumb){ 
@@ -53,7 +55,7 @@ const listCmnt = (request,response)=>{
                 //result.status(400).send(err);
             }
             console.log(result);
-            response.send(result.rows); 
+             response.send(result.rows); 
             // res.status(200).json(response.rows);
         });
     } 
@@ -63,7 +65,7 @@ const addCmnt = (request,response)=>{
     //const {name, email} = req.body;
     var cmntid = request.body["cmntid"]; 
     var cmnttext = request.body["cmnttext"]; 
-    var cmntadddate = moment().format("YYYYMMDD");
+    var cmntadddate = moment().format("YYYYMMDD HH:mm:ss");
     var cmntpw = request.body["cmntpw"];
     
     pool.query('INSERT INTO comment(cmnttext, cmntadddate, cmntpw) VALUES($1, $2, $3)',[cmnttext, cmntadddate, cmntpw]);
