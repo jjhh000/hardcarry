@@ -2,9 +2,6 @@ const { response } = require('express');
 const { Pool } = require('pg');
 const { upperCase } = require('upper-case');
 const moment = require("moment");  
-require('moment-timezone')
-
-moment.tz.setDefault('Asia/Seoul'); // +9:00
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -24,13 +21,13 @@ const listCmnt = (request,response)=>{
     }
 
     if(pagenumb){ 
-        var pagestart = (pagenumb -1) * pagesize;  
+        var pagestart = (((pagenumb -1) * pagesize) + 1);   
         
         if(pagestart == 0){
             pagestart = 1;
         }
 
-        var pageend = pagenumb * pagesize;
+        var pageend = (pagestart + (pagesize - 1));
         
         console.log("list here (paging) pagenumb : " + pagenumb + " / pagesize : " + pagesize + " / pagestart : " + pagestart + " / pageend : " + pageend);  
 
@@ -68,7 +65,7 @@ const addCmnt = (request,response)=>{
     //const {name, email} = req.body;
     var cmntid = request.body["cmntid"]; 
     var cmnttext = request.body["cmnttext"]; 
-    var cmntadddate = moment().utcOffset(540).format("YYYYMMDD HH:mm:ss");
+    var cmntadddate = moment().format("YYYYMMDD HH:mm:ss");
     var cmntpw = request.body["cmntpw"];
     
     pool.query('INSERT INTO comment(cmnttext, cmntadddate, cmntpw) VALUES($1, $2, $3)',[cmnttext, cmntadddate, cmntpw]);
@@ -84,7 +81,7 @@ const addCmnt = (request,response)=>{
 const updateCmnt = (request,response)=>{
     var cmntid = request.body["cmntid"]; 
     var cmnttext = request.body["cmnttext"]; 
-    var cmntfixdate = moment().utcOffset(540).format("YYYYMMDD HH:mm:ss");
+    var cmntfixdate = moment().format("YYYYMMDD");
     var cmntpw = request.body["cmntpw"]; 
     
     //const id = req.params.id;
@@ -102,7 +99,7 @@ const updateCmnt = (request,response)=>{
 const deleteCmnt = (request,response)=>{
     var cmntid = request.body["cmntid"]; 
     var cmnttext = request.body["cmnttext"]; 
-    var cmntfixdate = moment().utcOffset(540).format("YYYYMMDD HH:mm:ss");
+    var cmntfixdate = moment().format("YYYYMMDD");
     var cmntpw = request.body["cmntpw"];
 
     response.json('do not use this api...(deleteCmnt -> compareCmntPw)');
@@ -118,7 +115,7 @@ const compareCmntPw = (request,response)=>{
     var operation = request.body["operation"];
     var cmntid = request.body["cmntid"]; 
     var cmnttext = request.body["cmnttext"]; 
-    var cmntfixdate = moment().utcOffset(540).format("YYYYMMDD HH:mm:ss");
+    var cmntfixdate = moment().format("YYYYMMDD");
     var cmntpw = request.body["cmntpw"]; 
  
     pool.query('SELECT * FROM comment WHERE cmntid = $1 and cmntpw = $2',[cmntid, cmntpw],(err, result) => {   
