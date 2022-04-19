@@ -11,20 +11,25 @@ const pool = new Pool({
 })
 
 const listCmnt = (request,response)=>{
-    var pagenumb = request.body["pagenumb"];  
+    var pagenumb = request.params.pagenumb;  
     var pagesize = 10;  
     
-    if(request.body["pagesize"]){
-        pagesize = request.body["pagesize"];
+    if(request.params.pagenumb){
+        pagesize = request.params.pagesize;
     }
 
     if(pagenumb){ 
         var pagestart = (pagenumb -1) * pagesize;  
+        
+        if(pagestart == 0){
+            pagestart = 1;
+        }
+
         var pageend = pagenumb * pagesize;
         
-        console.log("list here (paging) " + pagenumb + " / " + pagesize + " / " + pagestart + " / " + pageend);  
+        console.log("list here (paging) pagenumb : " + pagenumb + " / pagesize : " + pagesize + " / pagestart : " + pagestart + " / pageend : " + pageend);  
 
-        pool.query('SELECT a.* FROM (SELECT row_number() over(), * FROM comment  ORDER BY cmntid desc) a '
+        pool.query('SELECT a.* FROM (SELECT row_number() over(order by cmntid desc), * FROM comment ) a '
                     + 'WHERE row_number BETWEEN $1 AND $2',[pagestart,pageend] , (err, result) => { 
             if (err) {
                 return console.error('Error executing query', err.stack); 
