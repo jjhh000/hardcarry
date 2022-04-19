@@ -2,6 +2,9 @@ const { response } = require('express');
 const { Pool } = require('pg');
 const { upperCase } = require('upper-case');
 const moment = require("moment");  
+require('moment-timezone')
+
+moment.tz.setDefault('Asia/Seoul'); // +9:00
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -65,7 +68,7 @@ const addCmnt = (request,response)=>{
     //const {name, email} = req.body;
     var cmntid = request.body["cmntid"]; 
     var cmnttext = request.body["cmnttext"]; 
-    var cmntadddate = moment().format("YYYYMMDD HH:mm:ss");
+    var cmntadddate = moment().utcOffset(540).format("YYYYMMDD HH:mm:ss");
     var cmntpw = request.body["cmntpw"];
     
     pool.query('INSERT INTO comment(cmnttext, cmntadddate, cmntpw) VALUES($1, $2, $3)',[cmnttext, cmntadddate, cmntpw]);
@@ -81,7 +84,7 @@ const addCmnt = (request,response)=>{
 const updateCmnt = (request,response)=>{
     var cmntid = request.body["cmntid"]; 
     var cmnttext = request.body["cmnttext"]; 
-    var cmntfixdate = moment().format("YYYYMMDD");
+    var cmntfixdate = moment().utcOffset(540).format("YYYYMMDD HH:mm:ss");
     var cmntpw = request.body["cmntpw"]; 
     
     //const id = req.params.id;
@@ -99,7 +102,7 @@ const updateCmnt = (request,response)=>{
 const deleteCmnt = (request,response)=>{
     var cmntid = request.body["cmntid"]; 
     var cmnttext = request.body["cmnttext"]; 
-    var cmntfixdate = moment().format("YYYYMMDD");
+    var cmntfixdate = moment().utcOffset(540).format("YYYYMMDD HH:mm:ss");
     var cmntpw = request.body["cmntpw"];
 
     response.json('do not use this api...(deleteCmnt -> compareCmntPw)');
@@ -115,7 +118,7 @@ const compareCmntPw = (request,response)=>{
     var operation = request.body["operation"];
     var cmntid = request.body["cmntid"]; 
     var cmnttext = request.body["cmnttext"]; 
-    var cmntfixdate = moment().format("YYYYMMDD");
+    var cmntfixdate = moment().utcOffset(540).format("YYYYMMDD HH:mm:ss");
     var cmntpw = request.body["cmntpw"]; 
  
     pool.query('SELECT * FROM comment WHERE cmntid = $1 and cmntpw = $2',[cmntid, cmntpw],(err, result) => {   
