@@ -41,12 +41,7 @@ const listCmnt = (request,response)=>{
             }
 
             console.log(result); 
-
-            if(result.rows[0]){
-                response.send(result.rows); 
-            }else{
-                response.send("no comments list"); 
-            }; 
+            response.send(result.rows); 
             
             // res.status(200).json(response.rows);
         });
