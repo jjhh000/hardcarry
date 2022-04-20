@@ -198,12 +198,12 @@ const updateCard = (request,response)=>{
 
 const maeilZero = (request,response)=>{
 
-    response.download('./docs/test_sheet.pdf', (err)=>{
+    response.download('./docs/zero_diary+sticker.zip', (err)=>{
         if (err) {
-            console.log("maeilZero Error");
+            console.log("zero_diary Error");
             console.log(err);
         } else {
-            console.log("maeilZero Success");
+            console.log("zero_diary Success");
         }
     });
 }
