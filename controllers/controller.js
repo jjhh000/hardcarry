@@ -1,8 +1,8 @@
 const { response } = require('express');
 const { Pool } = require('pg');
-const { upperCase } = require('upper-case');
-const moment = require("moment");  
-
+const { upperCase } = require('upper-case'); 
+const crypto = require('crypto');
+  
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: { 
@@ -21,9 +21,9 @@ const listCmnt = (request,response)=>{
     }
 
     if(pagenumb){ 
-        var pagestart = (((pagenumb -1) * pagesize) + 1);   
+        var pagestart = (((pagenumb -1) * pagesize) + 1);  
         
-        if(pagestart == 0){
+        if(pagestart <= 0){
             pagestart = 1;
         }
 
@@ -40,8 +40,14 @@ const listCmnt = (request,response)=>{
                 //result.status(400).send(err);
             }
 
-            console.log(result);
-            response.send(result.rows); 
+            console.log(result); 
+
+            if(result.rows[0]){
+                response.send(result.rows); 
+            }else{
+                response.send("no comments list"); 
+            }; 
+            
             // res.status(200).json(response.rows);
         });
 
@@ -65,8 +71,8 @@ const addCmnt = (request,response)=>{
     //const {name, email} = req.body;
     var cmntid = request.body["cmntid"]; 
     var cmnttext = request.body["cmnttext"]; 
-    var cmntadddate = moment().format("YYYYMMDD HH:mm:ss");
-    var cmntpw = request.body["cmntpw"];
+    var cmntadddate = new Date();
+    var cmntpw = crypto.createHash('sha512').update(request.body["cmntpw"]).digest('base64');  
     
     pool.query('INSERT INTO comment(cmnttext, cmntadddate, cmntpw) VALUES($1, $2, $3)',[cmnttext, cmntadddate, cmntpw]);
     console.log(response);
@@ -81,8 +87,8 @@ const addCmnt = (request,response)=>{
 const updateCmnt = (request,response)=>{
     var cmntid = request.body["cmntid"]; 
     var cmnttext = request.body["cmnttext"]; 
-    var cmntfixdate = moment().format("YYYYMMDD");
-    var cmntpw = request.body["cmntpw"]; 
+    var cmntfixdate = new Date();
+    var cmntpw = crypto.createHash('sha512').update(request.body["cmntpw"]).digest('base64');  
     
     //const id = req.params.id;
     //const {name, email} = req.body;
@@ -99,7 +105,7 @@ const updateCmnt = (request,response)=>{
 const deleteCmnt = (request,response)=>{
     var cmntid = request.body["cmntid"]; 
     var cmnttext = request.body["cmnttext"]; 
-    var cmntfixdate = moment().format("YYYYMMDD");
+    var cmntfixdate = new Date();
     var cmntpw = request.body["cmntpw"];
 
     response.json('do not use this api...(deleteCmnt -> compareCmntPw)');
@@ -110,15 +116,16 @@ const deleteCmnt = (request,response)=>{
     //response.json(` ${cmntid} deleted successfully`);
     */
 };
-
+ 
 const compareCmntPw = (request,response)=>{
     var operation = request.body["operation"];
     var cmntid = request.body["cmntid"]; 
     var cmnttext = request.body["cmnttext"]; 
-    var cmntfixdate = moment().format("YYYYMMDD");
-    var cmntpw = request.body["cmntpw"]; 
+    var cmntfixdate = new Date();
+    var cmntpw = crypto.createHash('sha512').update(request.body["cmntpw"]).digest('base64');  
+    //var cmntpw = request.body["cmntpw"]; 
  
-    pool.query('SELECT * FROM comment WHERE cmntid = $1 and cmntpw = $2',[cmntid, cmntpw],(err, result) => {   
+    pool.query('SELECT * FROM comment WHERE cmntid = $1 ',[cmntid],(err, result) => {   
         console.log("compareCmntPw select result : " + result);
 
         if (err) {
@@ -130,9 +137,11 @@ const compareCmntPw = (request,response)=>{
             response.json("not matched data... check 'cmntid and cmntpw'"); 
             console.log('not matched data' + result.rows); 
 
-        }else if(result.rows[0]) { 
+        }else if(result.rows[0]) {  
+            
+            console.log('check pw.. cmntpw : ' + cmntpw + " / result.rows[0].cmntpw : " + result.rows[0].cmntpw); 
             if(result.rows[0].cmntpw == cmntpw){
-                console.log(result.rows); 
+                //console.log(result.rows); 
 
                 if(upperCase(operation) == "U") {
                     pool.query('UPDATE comment SET cmnttext = $1, cmntfixdate = $2  WHERE cmntid = $3 and cmntpw = $4',[cmnttext, cmntfixdate, cmntid, cmntpw]);
@@ -147,10 +156,11 @@ const compareCmntPw = (request,response)=>{
 
             }else{  
                 console.log("!= pw");
-
+                response.send("!= pw"); 
+                
             }
         }
-        console.log(result);
+        //console.log(result);
         //response.send(result.rows);
          
 
