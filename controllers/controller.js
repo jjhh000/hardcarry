@@ -203,7 +203,7 @@ const updateCard = (request,response)=>{
 
 const maeilZero = (request,response)=>{
 
-    response.download('./docs/zero_diary+sticker.zip', (err)=>{
+    response.download('./public/zero_diary+sticker.zip', (err)=>{
         if (err) {
             console.log("zero_diary Error");
             console.log(err);
