@@ -31,7 +31,7 @@ const listCmnt = (request,response)=>{
         
         console.log("list here (paging) pagenumb : " + pagenumb + " / pagesize : " + pagesize + " / pagestart : " + pagestart + " / pageend : " + pageend);  
 
-        pool.query('SELECT a.* FROM (SELECT row_number() over(order by cmntid desc), * FROM comment ) a '
+        pool.query('SELECT a.* FROM (SELECT count(*) over() as totalcnt, row_number() over(order by cmntid desc), * FROM comment ) a '
                     + 'WHERE row_number BETWEEN $1 AND $2',[pagestart,pageend] , (err, result) => { 
             if (err) {
                 return console.error('Error executing query', err.stack); 
