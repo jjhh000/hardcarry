@@ -31,5 +31,5 @@ module.exports = app =>{
     router.get("/v2/zeroDiary",api2.zeroDiary);
     
 
-    app.use(['/','/hardcarry'],router);
+    app.use('/hardcarry',router);
    }
